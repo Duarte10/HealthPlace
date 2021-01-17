@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using HealthPlace.Logic.Exceptions;
 using HealthPlace.Logic.Managers;
 using HealthPlace.WebApi.ApiResources;
@@ -12,6 +14,27 @@ namespace HealthPlace.WebApi.Controllers
     [ApiController]
     public class VisitorsController : ControllerBase
     {
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult GetAll()
+        {
+            try
+            {
+                VisitorManager visitorMng = new VisitorManager();
+                List<VisitorResource> visitors = visitorMng.GetAllRecords().Select(v => v.ToVisitorResource()).ToList();
+                return Ok(visitors);
+            }
+            catch (EntityValidationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch
+            {
+                return Problem();
+            }
+        }
+
         [Authorize]
         [HttpPost("new")]
         public IActionResult New(VisitorResource visitor)

@@ -36,6 +36,18 @@ namespace HealthPlace.WebApi
 
             // Configure DI for application services
             services.AddScoped<IUserService, UserService>();
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy(name: "localhost",
+                                  builder =>
+                                  {
+                                      builder.WithOrigins("http://localhost:3000",
+                                                          "https://localhost:3000")
+                                                          .AllowAnyHeader()
+                                                          .AllowAnyMethod();
+                                  });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -55,6 +67,7 @@ namespace HealthPlace.WebApi
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
+            app.UseCors("localhost");
 
             app.UseRouting();
 
@@ -68,15 +81,15 @@ namespace HealthPlace.WebApi
                     pattern: "{controller}/{action=Index}/{id?}");
             });
 
-            app.UseSpa(spa =>
-            {
-                spa.Options.SourcePath = "ClientApp";
+            //app.UseSpa(spa =>
+            //{
+            //    spa.Options.SourcePath = "ClientApp";
 
-                if (env.IsDevelopment())
-                {
-                    spa.UseReactDevelopmentServer(npmScript: "start");
-                }
-            });
+            //    if (env.IsDevelopment())
+            //    {
+            //        spa.UseReactDevelopmentServer(npmScript: "start");
+            //    }
+            //});
 
             HealthPlace.Logic.Startup.OnStartup();
         }

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import axios from 'axios';
 import './LoginPage.scss';
 
 type LoginPageState = {
@@ -8,6 +9,10 @@ type LoginPageState = {
 
 class LoginPage extends React.Component<{ history: any }, LoginPageState> {
     render() {
+        if (window.localStorage.getItem('token')) {
+            this.props.history.push('/');
+            return null;
+        }
         return <>
             <div className="form-signin">
                 <img className="mb-4" src={require("../../assets/log-in.svg")} alt="" width="72" height="57" />
@@ -26,27 +31,13 @@ class LoginPage extends React.Component<{ history: any }, LoginPageState> {
             window.alert('Email and Password are required');
             return;
         }
-
-        const body = JSON.stringify({
+        axios.post('/users/authenticate', {
             email: this.state.email,
             password: this.state.password
-        });
-        fetch('https://localhost:44374/api/users/authenticate', {
-            method: 'post',
-            body,
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        }).then(response => {
-            if (!response.ok) {
-                window.alert('Invalid email or password');
-            } else {
-                return response.text() as Promise<string>;
-            }
-        }).then(data => {
-            localStorage.setItem("token", data);
-            this.props.history.push('/')
-        })
+        }).then(result => {
+            localStorage.setItem("token", result.data as string);
+            this.props.history.push('/');
+        }).catch(() => window.alert('Invalid email or password'));
     }
 }
 

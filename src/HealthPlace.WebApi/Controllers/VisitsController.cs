@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HealthPlace.WebApi.Controllers
 {
-    [Route("api/visitors")]
+    [Route("api/visits")]
     [ApiController]
     public class VisitsController : ControllerBase
     {

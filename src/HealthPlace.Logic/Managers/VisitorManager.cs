@@ -41,6 +41,37 @@ namespace HealthPlace.Logic.Managers
         }
 
         /// <summary>
+        /// Retrieves the visitor with the specified email
+        /// </summary>
+        /// <param name="email">The email of the visitor</param>
+        /// <returns>The visitor with the specified email</returns>
+        public Visitor GetRecordByEmail(string email)
+        {
+            var visitor = DbContext<VisitorModel>.GetAllRecords().Where(v => v.Email.ToUpper() == email.ToUpper()).FirstOrDefault();
+            if (visitor != null)
+            {
+                return visitor.ToVisitor();
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Retrieves the visitor with the specified mobile
+        /// </summary>
+        /// <param name="mobile">The email of the mobile</param>
+        /// <returns>The visitor with the specified mobile number</returns>
+        public Visitor GetRecordByMobile(string mobile)
+        {
+            var visitor = DbContext<VisitorModel>.GetAllRecords().Where(v => v.Mobile.ToUpper() == mobile.ToUpper()).FirstOrDefault();
+            if (visitor != null)
+            {
+                return visitor.ToVisitor();
+            }
+            return null;
+        }
+
+
+        /// <summary>
         /// Inserts a new visitor
         /// </summary>
         /// <param name="visitor">The visitor</param>
@@ -91,7 +122,12 @@ namespace HealthPlace.Logic.Managers
 
             if (string.IsNullOrEmpty(visitor.Mobile) && string.IsNullOrEmpty(visitor.Email))
                 throw new EntityValidationException("The visitor must have at least an Email or Mobile number filled.");
+            
+            if (visitor.Email != null && this.GetRecordByEmail(visitor.Email) != null)
+                throw new EntityValidationException($"There is already a visitor created with the email {visitor.Email}");
 
+            if (visitor.Mobile != null && this.GetRecordByMobile(visitor.Mobile) != null)
+                throw new EntityValidationException($"There is already a visitor created with the mobile {visitor.Mobile}");
         }
 
         /// <summary>
