@@ -9,6 +9,7 @@ One of the reasons the COVID-19 pandemic is taking over the world is how easy it
 * .NET Core 3.1
 * LiteDB
 * ReactJS
+* TypeScript
 
 # Authors
 * [Rafael Duarte](https://github.com/Duarte10)
