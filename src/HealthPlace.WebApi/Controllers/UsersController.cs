@@ -1,13 +1,16 @@
-﻿using HealthPlace.Logic.Exceptions;
-using HealthPlace.Logic.Helpers;
-using HealthPlace.Logic.Managers;
+﻿using System;
+using HealthPlace.Logic.Exceptions;
 using HealthPlace.WebApi.ApiResources;
 using HealthPlace.WebApi.Helpers;
+using HealthPlace.WebApi.Services;
 using Microsoft.AspNetCore.Mvc;
-using static HealthPlace.WebApi.Services.UsersService;
 
 namespace HealthPlace.WebApi.Controllers
 {
+    /// <summary>
+    /// ApiController of the User entity
+    /// </summary>
+    /// <seealso cref="Microsoft.AspNetCore.Mvc.ControllerBase" />
     [ApiController]
     [Route("api/users")]
     public class UsersController : ControllerBase
@@ -19,13 +22,11 @@ namespace HealthPlace.WebApi.Controllers
             _userService = userService;
         }
 
-        [HttpGet("hash")]
-        public IActionResult Hash(string clearText)
-        {
-            var hashingHelper = new HashingHelper();
-            return Ok(hashingHelper.HashToString(clearText));
-        }
-
+        /// <summary>
+        /// Authenticates the specified model.
+        /// </summary>
+        /// <param name="model">The model.</param>
+        /// <returns>HttpResponse with the generated JWT Token</returns>
         [HttpPost("authenticate")]
         public IActionResult Authenticate(AuthenticateRequest model)
         {
@@ -37,6 +38,30 @@ namespace HealthPlace.WebApi.Controllers
             return Ok(token);
         }
 
+        /// <summary>
+        /// Retrieves all users.
+        /// </summary>
+        /// <returns>All the users.</returns>
+        [Authorize]
+        [HttpGet]
+        public IActionResult GetAll()
+        {
+            try
+            {
+                var users = _userService.GetAll();
+                return Ok(users);
+            }
+            catch
+            {
+                return Problem();
+            }
+        }
+
+        /// <summary>
+        /// Creates a new user.
+        /// </summary>
+        /// <param name="newUser">The new user.</param>
+        /// <returns>HttpResponse</returns>
         [Authorize]
         [HttpPost("new")]
         public IActionResult New(NewUserResource newUser)
@@ -56,5 +81,35 @@ namespace HealthPlace.WebApi.Controllers
                 return Problem();
             }
         }
+
+        /// <summary>
+        /// Deletes the specified user.
+        /// </summary>
+        /// <param name="id">The user id.</param>
+        /// <returns>HttpResponse</returns>
+        [Authorize]
+        [HttpDelete("{id}")]
+        public IActionResult Delete(Guid id)
+        {
+            try
+            {
+                var user = _userService.GetById(id);
+                if (user == null)
+                {
+                    return BadRequest("Invalid user id.");
+                }
+                _userService.DeleteUser(id);
+                return Ok();
+            }
+            catch (EntityNotFoundException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch
+            {
+                return Problem();
+            }
+        }
+
     }
 }

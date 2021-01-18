@@ -25,7 +25,9 @@ namespace HealthPlace.Logic.Managers
         public IEnumerable<User> GetAllRecords()
         {
             var users = DbContext<UserModel>.GetAllRecords();
-            return users.Select(x => x.ToUser()).ToList();
+
+            // excule system user
+            return users.Where(u => u.Name != "<system>").Select(x => x.ToUser()).ToList();
         }
 
         /// <summary>

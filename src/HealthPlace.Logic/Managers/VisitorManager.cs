@@ -47,7 +47,7 @@ namespace HealthPlace.Logic.Managers
         /// <returns>The visitor with the specified email</returns>
         public Visitor GetRecordByEmail(string email)
         {
-            var visitor = DbContext<VisitorModel>.GetAllRecords().Where(v => v.Email.ToUpper() == email.ToUpper()).FirstOrDefault();
+            var visitor = DbContext<VisitorModel>.GetAllRecords().Where(v => !string.IsNullOrEmpty(v.Email) && v.Email.ToUpper() == email.ToUpper()).FirstOrDefault();
             if (visitor != null)
             {
                 return visitor.ToVisitor();
@@ -62,7 +62,7 @@ namespace HealthPlace.Logic.Managers
         /// <returns>The visitor with the specified mobile number</returns>
         public Visitor GetRecordByMobile(string mobile)
         {
-            var visitor = DbContext<VisitorModel>.GetAllRecords().Where(v => v.Mobile.ToUpper() == mobile.ToUpper()).FirstOrDefault();
+            var visitor = DbContext<VisitorModel>.GetAllRecords().Where(v => !string.IsNullOrEmpty(v.Mobile) && v.Mobile.ToUpper() == mobile.ToUpper()).FirstOrDefault();
             if (visitor != null)
             {
                 return visitor.ToVisitor();
@@ -123,11 +123,24 @@ namespace HealthPlace.Logic.Managers
             if (string.IsNullOrEmpty(visitor.Mobile) && string.IsNullOrEmpty(visitor.Email))
                 throw new EntityValidationException("The visitor must have at least an Email or Mobile number filled.");
             
-            if (visitor.Email != null && this.GetRecordByEmail(visitor.Email) != null)
-                throw new EntityValidationException($"There is already a visitor created with the email {visitor.Email}");
+            
+            if (!string.IsNullOrEmpty(visitor.Email))
+            {
+                Visitor visitorWithSameEmail = this.GetRecordByEmail(visitor.Email);
+                if (visitorWithSameEmail != null && visitorWithSameEmail.Id != visitor.Id)
+                {
+                    throw new EntityValidationException($"There is already a visitor created with the email {visitor.Email}");
+                }
+            }
 
-            if (visitor.Mobile != null && this.GetRecordByMobile(visitor.Mobile) != null)
-                throw new EntityValidationException($"There is already a visitor created with the mobile {visitor.Mobile}");
+            if (!string.IsNullOrEmpty(visitor.Mobile))
+            {
+                Visitor visitorWithSameMobile = this.GetRecordByMobile(visitor.Mobile);
+                if (visitorWithSameMobile != null && visitorWithSameMobile.Id != visitor.Id)
+                {
+                    throw new EntityValidationException($"There is already a visitor created with the mobile {visitor.Mobile}");
+                }
+            }
         }
 
         /// <summary>

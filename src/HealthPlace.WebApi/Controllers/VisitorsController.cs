@@ -36,6 +36,26 @@ namespace HealthPlace.WebApi.Controllers
         }
 
         [Authorize]
+        [HttpGet("{id}")]
+        public IActionResult GetVisitor(Guid id)
+        {
+            try
+            {
+                VisitorManager visitorMng = new VisitorManager();
+                VisitorResource visitor = visitorMng.GetRecordById(id).ToVisitorResource();
+                return Ok(visitor);
+            }
+            catch (EntityValidationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch
+            {
+                return Problem();
+            }
+        }
+
+        [Authorize]
         [HttpPost("new")]
         public IActionResult New(VisitorResource visitor)
         {
@@ -75,14 +95,14 @@ namespace HealthPlace.WebApi.Controllers
             {
                 return BadRequest(ex.Message);
             }
-            catch
+            catch (Exception ex)
             {
-                return Problem();
+                return Problem(ex.Message);
             }
         }
 
         [Authorize]
-        [HttpPost("delete")]
+        [HttpDelete("{id}")]
         public IActionResult Delete(Guid id)
         {
             try

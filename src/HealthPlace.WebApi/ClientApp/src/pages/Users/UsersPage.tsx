@@ -1,51 +1,50 @@
 import * as React from 'react';
 import axios from 'axios';
 
-type Visitor = {
+type User = {
     id: string,
     name: string,
-    mobile: string,
     email: string
 }
 
-class VisitorsPage extends React.Component<{ history: any }, { visitors: Visitor[], selectedVisitor?: Visitor, deleteVisitor: Boolean }> {
+class UsersPage extends React.Component<{ history: any }, { users: User[], selectedUser?: User, deleteUser: Boolean }> {
 
     constructor(props: any) {
         super(props);
         this.state = {
-            visitors: [],
-            deleteVisitor: false
+            users: [],
+            deleteUser: false
         }
     }
 
     componentDidMount() {
-        this.loadVisitors();
+        this.loadUsers();
     }
 
-    loadVisitors() {
-        axios.get('/visitors')
-            .then(result => this.setState({ visitors: result.data }));
+    loadUsers() {
+        axios.get('/users')
+            .then(result => this.setState({ users: result.data }));
     }
 
-    openDeleteVisitorModal(visitor: Visitor) {
-        this.setState({ deleteVisitor: true, selectedVisitor: visitor });
+    openDeleteUserModal(user: User) {
+        this.setState({ deleteUser: true, selectedUser: user });
         (document.getElementById('backdrop') as any).style.display = 'block';
         (document.getElementById('deleteUserModal') as any).style.display = 'block';
         (document.getElementById('deleteUserModal') as any).className += 'show';
     }
 
-    closeDeleteVisitorModal() {
-        this.setState({ deleteVisitor: false, selectedVisitor: undefined });
+    closeDeleteUserModal() {
+        this.setState({ deleteUser: false, selectedUser: undefined });
         (document.getElementById('backdrop') as any).style.display = 'none';
         (document.getElementById('deleteUserModal') as any).style.display = 'none';
         (document.getElementById('deleteUserModal') as any).className += (document.getElementById('deleteUserModal') as any).className.replace('show', '')
     }
 
-    deleteVisitor() {
-        axios.delete('/visitors/' + this.state.selectedVisitor?.id)
+    deleteUser() {
+        axios.delete('/users/' + this.state.selectedUser?.id)
             .then(() => {
-                this.closeDeleteVisitorModal();
-                this.loadVisitors();
+                this.closeDeleteUserModal();
+                this.loadUsers();
             })
             .catch(error => {
                 console.error(error);
@@ -57,7 +56,7 @@ class VisitorsPage extends React.Component<{ history: any }, { visitors: Visitor
 
     render() {
         return <>
-            <button className='btn btn-primary' style={{ marginBottom: '15px' }} onClick={() => this.props.history.push('/visitors/new')}>New</button>
+            <button className='btn btn-primary' style={{ marginBottom: '15px' }} onClick={() => this.props.history.push('/users/new')}>New</button>
             <table className='table'>
                 <thead>
                     <tr>
@@ -69,17 +68,16 @@ class VisitorsPage extends React.Component<{ history: any }, { visitors: Visitor
                 </thead>
                 <tbody>
                     {
-                        this.state.visitors.map((v: Visitor) => {
-                            return <tr key={v.id}>
-                                <td>{v.name}</td>
-                                <td>{v.mobile}</td>
-                                <td>{v.email}</td>
+                        this.state.users.map((u: User) => {
+                            return <tr key={u.id}>
+                                <td>{u.name}</td>
+                                <td>{u.email}</td>
                                 <td>
                                     <button className='btn btn-secondary btn-sm' style={{ marginRight: '5px' }}
-                                        onClick={() => this.props.history.push('/visitors/edit/' + v.id)}>
+                                        onClick={() => this.props.history.push('/users/edit/' + u.id)}>
                                         Edit
                                     </button>
-                                    <button className='btn btn-secondary btn-sm' onClick={() => this.openDeleteVisitorModal(v)}>
+                                    <button className='btn btn-secondary btn-sm' onClick={() => this.openDeleteUserModal(u)}>
                                         Delete
                                     </button>
                                 </td>
@@ -92,21 +90,21 @@ class VisitorsPage extends React.Component<{ history: any }, { visitors: Visitor
                 <div className='modal-dialog' role='document'>
                     <div className='modal-content'>
                         <div className='modal-header'>
-                            <h5 className='modal-title'>Delete visitor</h5>
+                            <h5 className='modal-title'>Delete user</h5>
                             <button type='button' className='close' data-dismiss='modal' aria-label='Close'>
                                 <span aria-hidden='true'>&times;</span>
                             </button>
                         </div>
                         <div className='modal-body'>
-                            <p>Are you sure you want to delete the visitor: {this.state.selectedVisitor?.name} ?</p>
+                            <p>Are you sure you want to delete the user: {this.state.selectedUser?.name} ?</p>
                         </div>
                         <div className='modal-footer'>
                             <button type='button' className='btn btn-danger'
-                                onClick={() => this.deleteVisitor()}>
+                                onClick={() => this.deleteUser()}>
                                 Delete
                             </button>
                             <button type='button' className='btn btn-secondary'
-                                onClick={() => this.closeDeleteVisitorModal()}>
+                                onClick={() => this.closeDeleteUserModal()}>
                                 Cancel
                         </button>
                         </div>
@@ -118,4 +116,4 @@ class VisitorsPage extends React.Component<{ history: any }, { visitors: Visitor
     }
 }
 
-export default VisitorsPage;
+export default UsersPage;

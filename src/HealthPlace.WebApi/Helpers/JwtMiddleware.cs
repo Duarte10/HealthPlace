@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using static HealthPlace.WebApi.Services.UsersService;
+using HealthPlace.WebApi.Services;
 
 namespace HealthPlace.WebApi.Helpers
 {

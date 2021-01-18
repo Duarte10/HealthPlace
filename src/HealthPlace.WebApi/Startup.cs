@@ -1,13 +1,10 @@
 using HealthPlace.WebApi.Helpers;
+using HealthPlace.WebApi.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using static HealthPlace.WebApi.Services.UsersService;
 
 namespace HealthPlace.WebApi
 {

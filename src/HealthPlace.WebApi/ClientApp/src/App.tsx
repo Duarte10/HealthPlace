@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Route } from 'react-router';
 import axios from 'axios';
+import { useHistory } from "react-router-dom";
 import Layout from './components/Layout';
 import Home from './components/Home';
 import Counter from './components/Counter';
@@ -8,10 +9,14 @@ import FetchData from './components/FetchData';
 import LoginPage from './pages/Login/LoginPage';
 import VisitorsPage from './pages/Visitors/VisitorsPage';
 import NewVisitorPage from './pages/Visitors/NewVisitorPage';
+import EditVisitorPage from './pages/Visitors/EditVisitorPage';
+import NewUserPage from './pages/Users/NewUserPage';
+import UsersPage from './pages/Users/UsersPage';
 
-import './custom.css'
+import './custom.scss'
 
 export default (props: any) => {
+    let history = useHistory();
     axios.defaults.baseURL = "https://localhost:44374/api";
     axios.interceptors.response.use(response => {
         return response;
@@ -21,7 +26,7 @@ export default (props: any) => {
         }
         if (error.response.status === 401) {
             localStorage.removeItem('token');
-            props.push('/login');
+            history.push('/login');
         }
         return Promise.reject(error);
     });
@@ -41,6 +46,9 @@ export default (props: any) => {
             <Route exact path='/login' component={LoginPage} />
             <Route exact path='/visitors' component={VisitorsPage} />
             <Route exact path='/visitors/new' component={NewVisitorPage} />
+            <Route exact path='/visitors/edit/:id' component={EditVisitorPage} />
+            <Route exact path='/users' component={UsersPage} />
+            <Route exact path='/users/new' component={NewUserPage} />
         </Layout>
     </>;
 }
