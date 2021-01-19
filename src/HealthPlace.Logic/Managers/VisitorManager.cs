@@ -161,7 +161,7 @@ namespace HealthPlace.Logic.Managers
 
             PositiveCaseManager positiveCaseMng = new PositiveCaseManager();
             if (positiveCaseMng.GetAllRecords().Any(x => x.Visitor?.Id == visitor.Id))
-                throw new EntityHasRelatedRecordsException("Vistor", "Positve Case");
+                throw new EntityHasRelatedRecordsException("Vistor", "Positove Case");
         }
 
         #endregion Private methods

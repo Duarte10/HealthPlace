@@ -58,6 +58,53 @@ namespace HealthPlace.WebApi.Controllers
         }
 
         /// <summary>
+        /// Retrieves the user with the specified id.
+        /// </summary>
+        /// <param name="id">The user id.</param>
+        /// <returns>The user</returns>
+        [Authorize]
+        [HttpGet("{id}")]
+        public IActionResult GetVisitor(Guid id)
+        {
+            try
+            {
+                return Ok(_userService.GetById(id));
+            }
+            catch (EntityValidationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch
+            {
+                return Problem();
+            }
+        }
+
+        [Authorize]
+        [HttpPost("update")]
+        public IActionResult Update(UserResource user)
+        {
+            try
+            {
+                string updatedBy = ((UserResource)HttpContext.Items["User"]).Email;
+                _userService.UpdateUser(user, updatedBy);
+                return Ok();
+            }
+            catch (EntityValidationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (EntityNotFoundException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch
+            {
+                return Problem();
+            }
+        }
+
+        /// <summary>
         /// Creates a new user.
         /// </summary>
         /// <param name="newUser">The new user.</param>
@@ -68,7 +115,7 @@ namespace HealthPlace.WebApi.Controllers
         {
             try
             {
-                newUser.CreatedBy = ((UserResource)HttpContext.Items["User"]).Email;                
+                newUser.CreatedBy = ((UserResource)HttpContext.Items["User"]).Email;
                 _userService.CreateUser(newUser);
                 return Ok();
             }
@@ -76,9 +123,9 @@ namespace HealthPlace.WebApi.Controllers
             {
                 return BadRequest(ex.Message);
             }
-            catch
+            catch (Exception ex)
             {
-                return Problem();
+                return Problem(ex.Message);
             }
         }
 

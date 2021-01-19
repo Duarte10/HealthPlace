@@ -12,6 +12,7 @@ import NewVisitorPage from './pages/Visitors/NewVisitorPage';
 import EditVisitorPage from './pages/Visitors/EditVisitorPage';
 import NewUserPage from './pages/Users/NewUserPage';
 import UsersPage from './pages/Users/UsersPage';
+import EditUsersPage from './pages/Users/EditUserPage';
 
 import './custom.scss'
 
@@ -49,6 +50,7 @@ export default (props: any) => {
             <Route exact path='/visitors/edit/:id' component={EditVisitorPage} />
             <Route exact path='/users' component={UsersPage} />
             <Route exact path='/users/new' component={NewUserPage} />
+            <Route exact path='/users/edit/:id' component={EditUsersPage} />
         </Layout>
     </>;
 }

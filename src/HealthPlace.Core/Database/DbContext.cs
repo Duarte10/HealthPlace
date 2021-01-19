@@ -59,6 +59,7 @@ namespace HealthPlace.Core.Database
             record.Id = Guid.NewGuid();
             record.CreatedOn = DateTime.UtcNow;
             record.UpdatedOn = record.CreatedOn;
+            record.UpdatedBy = record.CreatedBy;
             using (var db = new LiteDatabase(dbName))
             {
                 string collectionName = GetCollectionName();

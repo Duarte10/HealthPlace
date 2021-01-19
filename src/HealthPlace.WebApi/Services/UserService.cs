@@ -23,6 +23,7 @@ namespace HealthPlace.WebApi.Services
         UserResource GetById(Guid id);
         List<UserResource> GetAll();
         Guid CreateUser(NewUserResource newUser);
+        void UpdateUser(UserResource user, string updatedBy);
         void DeleteUser(Guid id);
     }
 
@@ -59,7 +60,7 @@ namespace HealthPlace.WebApi.Services
             bool authenticate = userMng.Authenticate(model.Email, model.Password);
             if (!authenticate) return null;
 
-            User user = userMng.GetRecordByEmail(model.Email);
+            User user = userMng.GetRecordByEmail(model.Email, true);
 
             // authentication successful so generate jwt token
             var token = GenerateJwtToken(user.ToUserResource());
@@ -85,6 +86,25 @@ namespace HealthPlace.WebApi.Services
             };
 
             return new UserManager().Insert(user);
+        }
+
+        /// <summary>
+        /// Updates the user.
+        /// </summary>
+        /// <param name="user">The user.</param>
+        public void UpdateUser(UserResource user, string updatedBy)
+        {
+            UserManager userMng = new UserManager();
+            var userDb = userMng.GetRecordById(user.Id);
+
+            if (userDb.Email != user.Email)
+                userDb.Email = user.Email;
+
+            if (userDb.Name != user.Name)
+                userDb.Name = user.Name;
+
+            userDb.UpdatedBy = updatedBy;
+            userMng.Update(userDb);
         }
 
         /// <summary>

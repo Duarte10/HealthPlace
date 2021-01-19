@@ -62,7 +62,9 @@ namespace HealthPlace.WebApi.Controllers
             try
             {
                 VisitorManager visitorMng = new VisitorManager();
-                visitorMng.Insert(visitor.ToVisitor());
+                var mappedVisitor = visitor.ToVisitor();
+                mappedVisitor.CreatedBy = ((UserResource)HttpContext.Items["User"]).Email;
+                visitorMng.Insert(mappedVisitor);
                 return Ok();
             }
             catch(EntityValidationException ex)
@@ -88,6 +90,7 @@ namespace HealthPlace.WebApi.Controllers
                 visitorDb.Name = visitor.Name;
                 visitorDb.Email = visitor.Email;
                 visitorDb.Mobile = visitor.Mobile;
+                visitorDb.UpdatedBy = ((UserResource)HttpContext.Items["User"]).Email;
                 visitorMng.Update(visitorDb);
                 return Ok();
             }

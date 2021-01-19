@@ -43,13 +43,20 @@ namespace HealthPlace.Logic.Managers
             return user;
         }
 
-        public User GetRecordByEmail(string email)
+        /// <summary>
+        /// Gets the record by email.
+        /// </summary>
+        /// <param name="email">The email.</param>
+        /// <param name="throwIfNotFound">Throws an exception if the user is not found.</param>
+        /// <returns>The user</returns>
+        /// <exception cref="EntityNotFoundException">User - email</exception>
+        public User GetRecordByEmail(string email, bool throwIfNotFound = false)
         {
             var users = DbContext<UserModel>.GetAllRecords().ToList();
             var user = users.FirstOrDefault(u => u.Email == email);
-            if (user == null)
+            if (user == null && throwIfNotFound)
                 throw new EntityNotFoundException("User", "email");
-            return user.ToUser();
+            return user?.ToUser();
         }
 
         /// <summary>
@@ -90,7 +97,7 @@ namespace HealthPlace.Logic.Managers
 
         public bool Authenticate(string email, string password)
         {
-            User user = this.GetRecordByEmail(email);
+            User user = this.GetRecordByEmail(email, true);
             HashingHelper hashingHelper = new HashingHelper();
             return hashingHelper.Verify(password, user.PasswordHash);
         }
@@ -111,6 +118,10 @@ namespace HealthPlace.Logic.Managers
 
             if (string.IsNullOrEmpty(user.PasswordHash))
                 throw new EntityValidationException("The user password hash cannot be empty!");
+
+            var userWithSameEmail = this.GetRecordByEmail(user.Email);
+            if (userWithSameEmail != null && userWithSameEmail.Id != user.Id)
+                throw new EntityValidationException($"There is already a user with the email: {user.Email}");
         }
         #endregion Private methods
 
