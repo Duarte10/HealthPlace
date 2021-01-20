@@ -56,6 +56,41 @@ namespace HealthPlace.WebApi.Controllers
         }
 
         [Authorize]
+        [HttpGet("{id}/overview")]
+        public IActionResult GetVisitorOverview(Guid id)
+        {
+            try
+            {
+                VisitorManager visitorMng = new VisitorManager();
+                VisitorResource visitor = visitorMng.GetRecordById(id).ToVisitorResource();
+
+                var result = new VisitorOverviewResource(visitor);
+                VisitorNotificationManager notificationsMng = new VisitorNotificationManager();
+                var notifications = notificationsMng.GetRecordsByVisitorId(id);
+                result.Notifications = notifications.Select(n => n.ToVisitorNotificationResource()).ToList();
+
+                VisitManager visitMng = new VisitManager();
+                var visits = visitMng.GetRecordsByVisitorId(id);
+                result.Visits = visits.Select(v => v.ToVisitResource()).ToList();
+
+                PositiveCaseManager positiveCasesMng = new PositiveCaseManager();
+                var positiveCases = positiveCasesMng.GetRecordsByVisitorId(id);
+                result.PositiveCases = positiveCases.Select(v => v.ToPositiveCaseResource()).ToList();
+
+                return Ok(result);
+            }
+            catch (EntityValidationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch
+            {
+                return Problem();
+            }
+        }
+
+
+        [Authorize]
         [HttpPost("new")]
         public IActionResult New(VisitorResource visitor)
         {

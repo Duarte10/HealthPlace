@@ -1,12 +1,6 @@
 import * as React from 'react';
 import axios from 'axios';
-
-type Visitor = {
-    id: string,
-    name: string,
-    mobile: string,
-    email: string
-}
+import { Visitor } from '../../types/Visitor';
 
 class VisitorsPage extends React.Component<{ history: any }, { visitors: Visitor[], selectedVisitor?: Visitor, deleteVisitor: Boolean }> {
 
@@ -30,15 +24,15 @@ class VisitorsPage extends React.Component<{ history: any }, { visitors: Visitor
     openDeleteVisitorModal(visitor: Visitor) {
         this.setState({ deleteVisitor: true, selectedVisitor: visitor });
         (document.getElementById('backdrop') as any).style.display = 'block';
-        (document.getElementById('deleteUserModal') as any).style.display = 'block';
-        (document.getElementById('deleteUserModal') as any).className += 'show';
+        (document.getElementById('deleteVisitorModal') as any).style.display = 'block';
+        (document.getElementById('deleteVisitorModal') as any).className += 'show';
     }
 
     closeDeleteVisitorModal() {
         this.setState({ deleteVisitor: false, selectedVisitor: undefined });
         (document.getElementById('backdrop') as any).style.display = 'none';
-        (document.getElementById('deleteUserModal') as any).style.display = 'none';
-        (document.getElementById('deleteUserModal') as any).className += (document.getElementById('deleteUserModal') as any).className.replace('show', '')
+        (document.getElementById('deleteVisitorModal') as any).style.display = 'none';
+        (document.getElementById('deleteVisitorModal') as any).className += (document.getElementById('deleteVisitorModal') as any).className.replace('show', '')
     }
 
     deleteVisitor() {
@@ -76,6 +70,10 @@ class VisitorsPage extends React.Component<{ history: any }, { visitors: Visitor
                                 <td>{v.email}</td>
                                 <td>
                                     <button className='btn btn-secondary btn-sm' style={{ marginRight: '5px' }}
+                                        onClick={() => this.props.history.push('/visitors/' + v.id + '/overview')}>
+                                        View
+                                    </button>
+                                    <button className='btn btn-secondary btn-sm' style={{ marginRight: '5px' }}
                                         onClick={() => this.props.history.push('/visitors/edit/' + v.id)}>
                                         Edit
                                     </button>
@@ -88,7 +86,7 @@ class VisitorsPage extends React.Component<{ history: any }, { visitors: Visitor
                     }
                 </tbody>
             </table>
-            <div id='deleteUserModal' className='modal fade' tabIndex={-1} role='dialog'>
+            <div id='deleteVisitorModal' className='modal fade' tabIndex={-1} role='dialog'>
                 <div className='modal-dialog' role='document'>
                     <div className='modal-content'>
                         <div className='modal-header'>

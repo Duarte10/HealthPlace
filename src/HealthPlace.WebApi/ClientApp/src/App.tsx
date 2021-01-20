@@ -10,9 +10,12 @@ import LoginPage from './pages/Login/LoginPage';
 import VisitorsPage from './pages/Visitors/VisitorsPage';
 import NewVisitorPage from './pages/Visitors/NewVisitorPage';
 import EditVisitorPage from './pages/Visitors/EditVisitorPage';
+import VisitorOverviewPage from './pages/Visitors/VisitorOverviewPage';
 import NewUserPage from './pages/Users/NewUserPage';
 import UsersPage from './pages/Users/UsersPage';
 import EditUsersPage from './pages/Users/EditUserPage';
+import PositiveCasesPage from './pages/PositiveCases/PositiveCasesPage';
+import NewPositiveCasePage from './pages/PositiveCases/NewPositiveCasePage';
 
 import './custom.scss'
 
@@ -48,9 +51,12 @@ export default (props: any) => {
             <Route exact path='/visitors' component={VisitorsPage} />
             <Route exact path='/visitors/new' component={NewVisitorPage} />
             <Route exact path='/visitors/edit/:id' component={EditVisitorPage} />
+            <Route exact path='/visitors/:id/overview' component={VisitorOverviewPage} />
             <Route exact path='/users' component={UsersPage} />
             <Route exact path='/users/new' component={NewUserPage} />
             <Route exact path='/users/edit/:id' component={EditUsersPage} />
+            <Route exact path='/positive-cases' component={PositiveCasesPage} />
+            <Route exact path='/positive-cases/new' component={NewPositiveCasePage} />
         </Layout>
     </>;
 }

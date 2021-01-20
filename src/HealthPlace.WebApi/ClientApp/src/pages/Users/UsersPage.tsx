@@ -1,11 +1,6 @@
 import * as React from 'react';
 import axios from 'axios';
-
-type User = {
-    id: string,
-    name: string,
-    email: string
-}
+import { User } from '../../types/User';
 
 class UsersPage extends React.Component<{ history: any }, { users: User[], selectedUser?: User, deleteUser: Boolean }> {
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using HealthPlace.Logic.Exceptions;
 using HealthPlace.Logic.Managers;
 using HealthPlace.Logic.Models;
@@ -13,6 +14,55 @@ namespace HealthPlace.WebApi.Controllers
     [ApiController]
     public class PositiveCaseController : ControllerBase
     {
+        /// <summary>
+        /// Retrieves all the positive cases.
+        /// </summary>
+        /// <returns>Positive cases</returns>
+        [Authorize]
+        [HttpGet]
+        public IActionResult GetAll()
+        {
+            try
+            {
+                PositiveCaseManager positiveCaseMng = new PositiveCaseManager();
+                var result = positiveCaseMng.GetAllRecords().Select(p => p.ToPositiveCaseResource());
+                return Ok(result);
+            }
+            catch (EntityValidationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch
+            {
+                return Problem();
+            }
+        }
+
+        [Authorize]
+        [HttpGet("{id}")]
+        public IActionResult GetPositiveCase(Guid id)
+        {
+            try
+            {
+                PositiveCaseManager positiveCaseMng = new PositiveCaseManager();
+                var positiveCase = positiveCaseMng.GetRecordById(id).ToPositiveCaseResource();
+                return Ok(positiveCase);
+            }
+            catch (EntityNotFoundException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch
+            {
+                return Problem();
+            }
+        }
+
+        /// <summary>
+        /// Inserts a new positive case.
+        /// </summary>
+        /// <param name="positiveCase">The positive case.</param>
+        /// <returns>HttpResponse</returns>
         [Authorize]
         [HttpPost("new")]
         public IActionResult New(PositiveCaseResource positiveCase)
@@ -33,6 +83,11 @@ namespace HealthPlace.WebApi.Controllers
             }
         }
 
+        /// <summary>
+        /// Updates the specified positive case.
+        /// </summary>
+        /// <param name="positiveCase">The positive case.</param>
+        /// <returns>HttpResponse</returns>
         [Authorize]
         [HttpPost("update")]
         public IActionResult Update(PositiveCaseResource positiveCase)
@@ -69,6 +124,11 @@ namespace HealthPlace.WebApi.Controllers
             }
         }
 
+        /// <summary>
+        /// Deletes the specified positive case.
+        /// </summary>
+        /// <param name="id">The positive case.</param>
+        /// <returns>HttpResponse</returns>
         [Authorize]
         [HttpPost("delete")]
         public IActionResult Delete(Guid id)

@@ -4,9 +4,9 @@ import { RouteComponentProps } from 'react-router';
 
 type EditVisitorState = {
     id: string;
-    name: string
-    email: string,
-    mobile: string
+    name: string;
+    email: string;
+    mobile: string;
 };
 
 class EditVisitorPage extends React.Component<RouteComponentProps<{ id: string }>, EditVisitorState> {

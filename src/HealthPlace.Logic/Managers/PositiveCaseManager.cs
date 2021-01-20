@@ -28,6 +28,17 @@ namespace HealthPlace.Logic.Managers
         }
 
         /// <summary>
+        /// Gets the positive cases with the specified user id.
+        /// </summary>
+        /// <param name="visitorId">The id of the user.</param>
+        /// <returns>The collection of positive cases with the specified user id.</returns>
+        public IEnumerable<PositiveCase> GetRecordsByVisitorId(Guid visitorId)
+        {
+            var positiveCases = DbContext<PositiveCaseModel>.GetAllRecords().Where(v => v.Visitor.Id == visitorId);
+            return positiveCases.Select(x => x.ToPositiveCase()).ToList();
+        }
+
+        /// <summary>
         /// Retrieves the visitor with the specified Id
         /// </summary>
         /// <param name="id">The Id of the visitor</param>

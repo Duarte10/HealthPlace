@@ -30,6 +30,17 @@ namespace HealthPlace.Logic.Managers
         }
 
         /// <summary>
+        /// Gets the visitor notifications with the specified user id.
+        /// </summary>
+        /// <param name="visitorId">The id of the user.</param>
+        /// <returns>The collection of visitor notifications with the specified user id.</returns>
+        public IEnumerable<VisitorNotification> GetRecordsByVisitorId(Guid visitorId)
+        {
+            var visitorNotifications = DbContext<VisitorNotificationModel>.GetAllRecords().Where(v => v.Visitor.Id == visitorId);
+            return visitorNotifications.Select(x => x.ToVisitorNotification()).ToList();
+        }
+
+        /// <summary>
         /// Retrieves the visitor notification with the specified Id
         /// </summary>
         /// <param name="id">The Id of the visitor notification</param>

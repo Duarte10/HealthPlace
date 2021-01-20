@@ -24,7 +24,7 @@ export default class NavMenu extends React.PureComponent<{}, { isOpen: boolean }
                                     <NavLink tag={Link} className="text-dark" to="/visitors">Visitors</NavLink>
                                 </NavItem>
                                 <NavItem>
-                                    <NavLink tag={Link} className="text-dark" to="/cases">Cases</NavLink>
+                                    <NavLink tag={Link} className="text-dark" to="/positive-cases">Cases</NavLink>
                                 </NavItem>
                                 <NavItem>
                                     <NavLink tag={Link} className="text-dark" to="/login" onClick={() => localStorage.removeItem("token")}>

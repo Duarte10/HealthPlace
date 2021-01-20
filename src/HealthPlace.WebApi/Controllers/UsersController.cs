@@ -64,7 +64,7 @@ namespace HealthPlace.WebApi.Controllers
         /// <returns>The user</returns>
         [Authorize]
         [HttpGet("{id}")]
-        public IActionResult GetVisitor(Guid id)
+        public IActionResult GetUser(Guid id)
         {
             try
             {

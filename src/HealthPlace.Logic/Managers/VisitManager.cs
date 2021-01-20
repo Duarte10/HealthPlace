@@ -28,6 +28,17 @@ namespace HealthPlace.Logic.Managers
         }
 
         /// <summary>
+        /// Gets the visits with the specified user id.
+        /// </summary>
+        /// <param name="visitorId">The id of the user.</param>
+        /// <returns>The collection of visits with the specified user id.</returns>
+        public IEnumerable<Visit> GetRecordsByVisitorId(Guid visitorId)
+        {
+            var visits = DbContext<VisitModel>.GetAllRecords().Where(v => v.Visitor.Id == visitorId);
+            return visits.Select(x => x.ToVisit()).ToList();
+        }
+
+        /// <summary>
         /// Retrieves the Visit with the specified Id
         /// </summary>
         /// <param name="id">The Id of the Visit</param>
