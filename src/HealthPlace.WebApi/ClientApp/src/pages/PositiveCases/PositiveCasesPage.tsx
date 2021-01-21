@@ -80,6 +80,10 @@ class PositiveCasesPage extends React.Component<{ history: any }, { positiveCase
                                 <td>{p.allUsersNotified ? 'Yes' : 'No'}</td>
                                 <td>
                                     <button className='btn btn-secondary btn-sm' style={{ marginRight: '5px' }}
+                                        onClick={() => this.props.history.push('/positive-cases/' + p.id + '/overview')}>
+                                        View
+                                    </button>
+                                    <button className='btn btn-secondary btn-sm' style={{ marginRight: '5px' }}
                                         onClick={() => this.props.history.push('/positive-cases/edit/' + p.id)}>
                                         Edit
                                     </button>

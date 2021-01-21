@@ -28,6 +28,53 @@ namespace HealthPlace.Logic.Managers
         }
 
         /// <summary>
+        /// Gets the user visits x days before the specified date.
+        /// </summary>
+        /// <param name="visitorId">The visitor identifier.</param>
+        /// <param name="visitDate">The visit date.</param>
+        /// <param name="numberOfDaysBefore">The number of days before date to consider.</param>
+        /// <returns></returns>
+        public IEnumerable<Visit> GetUserVisitsBeforeDate(Guid visitorId, DateTime visitDate, int numberOfDaysBefore)
+        {
+            DateTime startDate = visitDate.AddDays(-numberOfDaysBefore);
+            var visits = DbContext<VisitModel>.GetAllRecords()
+                .Where(v => v.Visitor.Id == visitorId
+                        && v.CheckIn <= visitDate && startDate <= v.CheckIn);
+            return visits.Select(x => x.ToVisit()).ToList();
+        }
+
+
+
+        /// <summary>
+        /// Gets the visits that collided with the specified visits.
+        /// </summary>
+        /// <param name="visits">The visits.</param>
+        /// <returns>The collided visits</returns>
+        public IEnumerable<Visit> GetCollidingVisits(List<Visit> visits)
+        {
+            List<Visit> result = new List<Visit>();
+
+            var visitsDb = DbContext<VisitModel>.GetAllRecords();
+
+            foreach(var visit in visits)
+            {
+                // If the checkout was not specified, we assume by default that it was 2 hours after checkin
+                if (visit.CheckOut == null) visit.CheckOut = visit.CheckIn.AddHours(2);
+
+                var conflictingVisits = visitsDb
+                    .Where(v => v.Id != visit.Id 
+                    && v.CheckIn < visit.CheckOut 
+                    && visit.CheckIn < v.CheckOut
+                    && !result.Any(r => r.Id == v.Id))
+                    .Select(v => v.ToVisit())
+                    .ToList();
+                result.AddRange(conflictingVisits);
+            }
+
+            return result;
+        }
+
+        /// <summary>
         /// Gets the visits with the specified user id.
         /// </summary>
         /// <param name="visitorId">The id of the user.</param>

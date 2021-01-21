@@ -11,6 +11,9 @@ namespace HealthPlace.WebApi.ApiResources
         [JsonPropertyName("visitorId")]
         public Guid VisitorId { get; set; }
 
+        [JsonPropertyName("visitorName")]
+        public string VisitorName { get; set; }
+
         [JsonPropertyName("visitDate")]
         public DateTime VisitDate { get; set; }
 

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace HealthPlace.WebApi.ApiResources
 {
@@ -21,25 +21,25 @@ namespace HealthPlace.WebApi.ApiResources
 
         #endregion 
 
-        [JsonProperty("id")]
+        [JsonPropertyName("id")]
         public Guid Id { get; set; }
 
-        [JsonProperty("name")]
+        [JsonPropertyName("name")]
         public string Name { get; set; }
 
-        [JsonProperty("email")]
+        [JsonPropertyName("email")]
         public string Email { get; set; }
 
-        [JsonProperty("mobile")]
+        [JsonPropertyName("mobile")]
         public string Mobile { get; set; }
 
-        [JsonProperty("visits")]
+        [JsonPropertyName("visits")]
         public IEnumerable<VisitResource> Visits { get; set; }
 
-        [JsonProperty("notifications")]
+        [JsonPropertyName("notifications")]
         public IEnumerable<VisitorNotificationResource> Notifications { get; set; }
 
-        [JsonProperty("positiveCases")]
+        [JsonPropertyName("positiveCases")]
         public IEnumerable<PositiveCaseResource> PositiveCases { get; set; }
 
     }

@@ -38,6 +38,66 @@ namespace HealthPlace.WebApi.Controllers
             }
         }
 
+        /// <summary>
+        /// Gets the positive case overview.
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        /// <returns>The positive case overview</returns>
+        [Authorize]
+        [HttpGet("{id}/overview")]
+        public IActionResult GetPositiveCaseOverview(Guid id)
+        {
+            try
+            {
+                PositiveCaseManager positiveCaseMng = new PositiveCaseManager();
+                VisitManager visitMng = new VisitManager();
+                VisitorManager visitorMng = new VisitorManager();
+                VisitorNotificationManager notificationMng = new VisitorNotificationManager();
+
+                var positiveCase = positiveCaseMng.GetRecordById(id).ToPositiveCaseResource();
+                var result = new PositiveCaseOverviewResource(positiveCase);
+
+                // load visitor name (needed for the autocomplete component)
+                result.VisitorName = visitorMng.GetRecordById(positiveCase.VisitorId).Name;
+
+                // Set date to the last minute of the day to include all the visits from that day on the retrieved visits
+                result.VisitDate = result.VisitDate.Date.AddHours(23).AddMinutes(59);
+                var positiveCaseVisitsBefore = visitMng.GetUserVisitsBeforeDate(result.VisitorId, result.VisitDate, 2).ToList();
+
+                // Get colliding visits
+                var collidingVisits = visitMng.GetCollidingVisits(positiveCaseVisitsBefore);
+
+
+                foreach(var collidingVisit in collidingVisits)
+                {
+                    result.CollidingVisits.Add(new AffectedVisitsResource()
+                    {
+                        VisitId = collidingVisit.Visitor.Id,
+                        VisitDate = collidingVisit.CheckIn,
+                        NotificationSent = notificationMng.GetRecordsByVisitorId(collidingVisit.Visitor.Id).Any(v => v.PositiveCase.Id == id),
+                        VisitorId = collidingVisit.Visitor.Id,
+                        VisitorName = visitorMng.GetRecordById(collidingVisit.Visitor.Id).Name
+                    });
+                }
+                result.AllUsersNotified = result.CollidingVisits.Any(c => !c.NotificationSent);
+
+                return Ok(result);
+            }
+            catch (EntityNotFoundException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return Problem(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Gets the positive case.
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        /// <returns>The positive case</returns>
         [Authorize]
         [HttpGet("{id}")]
         public IActionResult GetPositiveCase(Guid id)
@@ -45,7 +105,39 @@ namespace HealthPlace.WebApi.Controllers
             try
             {
                 PositiveCaseManager positiveCaseMng = new PositiveCaseManager();
+                VisitManager visitMng = new VisitManager();
+                VisitorNotificationManager notificationMng = new VisitorNotificationManager();
                 var positiveCase = positiveCaseMng.GetRecordById(id).ToPositiveCaseResource();
+
+                // load visitor name (needed for the autocomplete component)
+                VisitorManager visitorMng = new VisitorManager();
+                var visitor = visitorMng.GetRecordById(positiveCase.VisitorId);
+                positiveCase.VisitorName = visitor.Name;
+
+                #region Determine if all users with colliding visits were notified
+
+                // Set date to the last minute of the day to include all the visits from that day on the retrieved visits
+                DateTime visitDate = positiveCase.VisitDate.Date.AddHours(23).AddMinutes(59);
+                var positiveCaseVisitsBefore = visitMng.GetUserVisitsBeforeDate(positiveCase.VisitorId, visitDate, 2).ToList();
+
+                // Get colliding visits
+                var collidingVisits = visitMng.GetCollidingVisits(positiveCaseVisitsBefore);
+
+                positiveCase.AllUsersNotified = true;
+
+                foreach (var collidingVisit in collidingVisits)
+                {
+                    bool notificationSent = notificationMng.GetRecordsByVisitorId(collidingVisit.Visitor.Id).Any(v => v.PositiveCase.Id == id);
+                    if (!notificationSent)
+                    {
+                        positiveCase.AllUsersNotified = false;
+                        break;
+                    }
+
+                }
+
+                #endregion
+
                 return Ok(positiveCase);
             }
             catch (EntityNotFoundException ex)
@@ -101,7 +193,6 @@ namespace HealthPlace.WebApi.Controllers
 
                 positiveCaseDb.VisitDate = positiveCase.VisitDate;
 
-
                 if (positiveCaseDb.Visitor.Id != positiveCase.VisitorId)
                 {
                     VisitorManager visitorMng = new VisitorManager();
@@ -130,7 +221,7 @@ namespace HealthPlace.WebApi.Controllers
         /// <param name="id">The positive case.</param>
         /// <returns>HttpResponse</returns>
         [Authorize]
-        [HttpPost("delete")]
+        [HttpDelete("{id}")]
         public IActionResult Delete(Guid id)
         {
             try

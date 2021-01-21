@@ -21,7 +21,8 @@ namespace HealthPlace.WebApi.Resources.Mappers
                 Id = positiveCase.Id,
                 AllUsersNotified = positiveCase.AllUsersNotified,
                 VisitDate = positiveCase.VisitDate,
-                VisitorId = positiveCase.Visitor.Id
+                VisitorId = positiveCase.Visitor.Id,
+                VisitorName = positiveCase.Visitor.Name
             };
         }
 

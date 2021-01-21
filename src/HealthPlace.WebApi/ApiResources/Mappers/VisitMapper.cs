@@ -19,7 +19,8 @@ namespace HealthPlace.WebApi.Resources.Mappers
             {
                 Id = visit.Id,
                 CheckIn = visit.CheckIn,
-                CheckOut = visit.CheckOut
+                CheckOut = visit.CheckOut,
+                VisitorId = visit.Visitor.Id
             };
         }
 

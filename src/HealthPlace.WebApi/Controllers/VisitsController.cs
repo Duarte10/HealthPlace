@@ -133,7 +133,7 @@ namespace HealthPlace.WebApi.Controllers
         /// <param name="id">The visit id.</param>
         /// <returns>HttpResponse</returns>
         [Authorize]
-        [HttpPost("delete")]
+        [HttpDelete("{id}")]
         public IActionResult Delete(Guid id)
         {
             try

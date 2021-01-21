@@ -3,18 +3,21 @@ import axios from 'axios';
 import "flatpickr/dist/themes/material_blue.css";
 import Flatpickr from 'react-flatpickr';
 import Autocomplete from 'react-autocomplete';
+import { RouteComponentProps } from 'react-router-dom';
 
 type NewPositiveCaseState = {
+    id: string;
     visitDate: Date;
     visitors: [];
     selectedVisitor: any;
 };
 
-class NewPositiveCasePage extends React.Component<{ history: any }, NewPositiveCaseState> {
+class EditPositiveCasePage extends React.Component<RouteComponentProps<{ id: string }>, NewPositiveCaseState> {
 
     constructor(props: any) {
         super(props);
         this.state = {
+            id: '',
             selectedVisitor: {
                 name: '',
                 id: ''
@@ -22,9 +25,32 @@ class NewPositiveCasePage extends React.Component<{ history: any }, NewPositiveC
             visitDate: new Date(),
             visitors: []
         }
-        this.loadVisitors();
     }
 
+    componentDidMount() {
+        this.loadPositiveCase(() => this.loadVisitors());
+    }
+
+    loadPositiveCase(callBack: () => any) {
+        // load user data
+        axios.get('positive-cases/' + this.props.match.params.id)
+            .then(result => {
+                this.setState({
+                    id: result.data.id,
+                    visitDate: result.data.visitDate,
+                    selectedVisitor: {
+                        id: result.data.visitorId,
+                        name: result.data.visitorName
+                    }
+                })
+                callBack();
+            }).catch(error => {
+                console.error(error);
+                if (error.response?.data) {
+                    window.alert(error.response.data);
+                }
+            });
+    }
 
     loadVisitors() {
         axios.get('/visitors')
@@ -82,7 +108,8 @@ class NewPositiveCasePage extends React.Component<{ history: any }, NewPositiveC
             window.alert('Visitor is required!');
             return;
         }
-        axios.post('/positive-cases/new', {
+        axios.post('/positive-cases/update', {
+            id: this.state.id,
             visitDate: this.state.visitDate,
             visitorId: this.state.selectedVisitor.id
         }).then(() => {
@@ -96,4 +123,4 @@ class NewPositiveCasePage extends React.Component<{ history: any }, NewPositiveC
     }
 }
 
-export default NewPositiveCasePage;
+export default EditPositiveCasePage;

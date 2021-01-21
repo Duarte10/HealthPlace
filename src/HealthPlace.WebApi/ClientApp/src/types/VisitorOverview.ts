@@ -9,4 +9,6 @@ export type VisitorOverview = {
     notifications: [];
     positiveCases: [];
     activeTab: string;
+    newVisit: Visit;
+    selectedVisit: Visit;
 }

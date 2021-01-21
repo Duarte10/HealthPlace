@@ -3,9 +3,6 @@ import { Route } from 'react-router';
 import axios from 'axios';
 import { useHistory } from "react-router-dom";
 import Layout from './components/Layout';
-import Home from './components/Home';
-import Counter from './components/Counter';
-import FetchData from './components/FetchData';
 import LoginPage from './pages/Login/LoginPage';
 import VisitorsPage from './pages/Visitors/VisitorsPage';
 import NewVisitorPage from './pages/Visitors/NewVisitorPage';
@@ -16,6 +13,8 @@ import UsersPage from './pages/Users/UsersPage';
 import EditUsersPage from './pages/Users/EditUserPage';
 import PositiveCasesPage from './pages/PositiveCases/PositiveCasesPage';
 import NewPositiveCasePage from './pages/PositiveCases/NewPositiveCasePage';
+import EditPositiveCasePage from './pages/PositiveCases/EditPositiveCasePage';
+import PositiveCaseOverviewPage from './pages/PositiveCases/PositiveCaseOverviewPage';
 
 import './custom.scss'
 
@@ -44,9 +43,7 @@ export default (props: any) => {
 
     return <>
         <Layout>
-            <Route exact path='/' component={Home} />
-            <Route path='/counter' component={Counter} />
-            <Route path='/fetch-data/:startDateIndex?' component={FetchData} />
+            <Route exact path='/' component={VisitorsPage} />
             <Route exact path='/login' component={LoginPage} />
             <Route exact path='/visitors' component={VisitorsPage} />
             <Route exact path='/visitors/new' component={NewVisitorPage} />
@@ -57,6 +54,8 @@ export default (props: any) => {
             <Route exact path='/users/edit/:id' component={EditUsersPage} />
             <Route exact path='/positive-cases' component={PositiveCasesPage} />
             <Route exact path='/positive-cases/new' component={NewPositiveCasePage} />
+            <Route exact path='/positive-cases/edit/:id' component={EditPositiveCasePage} />
+            <Route exact path='/positive-cases/:id/overview' component={PositiveCaseOverviewPage} />
         </Layout>
     </>;
 }
