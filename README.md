@@ -1,5 +1,5 @@
 # HealthPlace
-HealthPlace is a SPA for containing COVID-19 spreading by alerting your customers that they were in close contact with someone infected.
+HealthPlace is a SPA for containing COVID-19 spread by alerting your customers that they were in close contact with someone infected.
 
 ![Positive cases overview](./docs/images/PositiveCasesOverview.png)
 
